@@ -18,6 +18,8 @@ pub async fn tcp_async_server(addr: SocketAddr) {
     loop {
         match listener.accept().await {
             Ok((mut tcp_stream, addr)) => {
+                tcp_stream.set_nodelay(true).unwrap();
+                tcp_stream.set_linger(None).unwrap();
                 loop {
                     let mut buf = BytesMut::with_capacity(4096);
                     loop {

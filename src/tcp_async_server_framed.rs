@@ -19,6 +19,8 @@ pub async fn tcp_async_server_framed(addr: SocketAddr) {
     loop {
         match listener.accept().await {
             Ok((mut tcp_stream, addr)) => {
+                tcp_stream.set_nodelay(true).unwrap();
+                tcp_stream.set_linger(None).unwrap();
                 let mut framed = Framed::new(tcp_stream, BytesCodec::new());
                 while let Some(msg_res) = framed.next().await {
                     match msg_res {
