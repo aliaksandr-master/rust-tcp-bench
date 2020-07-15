@@ -34,7 +34,7 @@ fn main() {
         CMD_BLOCKING_SERVER => tcp_blocking_server(socket),
         CMD_ASYNC_SERVER => tcp_async_server(socket),
         CMD_ASYNC_FRAMED_SERVER => tcp_async_server_framed(socket),
-        CMD_BENCH => tcp_bench(socket, 100_000, 10),
+        CMD_BENCH => tcp_bench(socket, 100_000, 1024),
         _ => unreachable!(),
     }
 }
