@@ -90,7 +90,7 @@ impl TimeProfiler {
         let total = self.total_ns();
 
         format!(
-            "count{eq}{}{del}total{eq}{}{del}avg{eq}{}{del}median{eq}{}{del}bw{eq}{}/s",
+            "count{eq}{}{del}total{eq}{}{del}avg{eq}{}{del}median{eq}{}{del}throughput{eq}{}/s",
             self.values.len(),
             fmt_ns(total),
             self.fmt_avg_ns(),
