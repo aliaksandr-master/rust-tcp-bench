@@ -27,21 +27,21 @@ throughput: 107369.23/s
 
 ### tcp_server_tokio
 ```
-avg: 023mks017ns
-median: 021mks289ns
-throughput: 43444.58/s
+avg: 022mks284ns
+median: 020mks563ns
+throughput: 44874.85/s
 ```
 
 ### tcp_server_tokio_framed_bytes
 ```
-avg: 021mks591ns
-median: 019mks761ns
-throughput: 46314.36/s
+avg: 022mks529ns
+median: 020mks847ns
+throughput: 44385.42/s
 ```
 
 ### tcp_server_mio
 ```
-avg: 020mks444ns
-median: 018mks624ns
-throughput: 48912.13/s
+avg: 018mks721ns
+median: 017mks996ns
+throughput: 53414.58/s
 ```
