@@ -19,13 +19,8 @@ impl TcpBenchMark {
         }
     }
 
-    pub fn run<TItem, FProcess, FPrepare, FEnd>(
-        &self,
-        items: Vec<TItem>,
-        mut prepare: FPrepare,
-        mut process: FProcess,
-        mut end: FEnd,
-    ) where
+    pub fn run<TItem, FProcess, FPrepare, FEnd>(&self, items: Vec<TItem>, mut prepare: FPrepare, mut process: FProcess, mut end: FEnd)
+    where
         FProcess: FnMut(&mut TcpStream, TItem, usize) -> (Duration, Duration),
         FPrepare: FnMut(&mut TcpStream),
         FEnd: FnMut(&mut TcpStream),
@@ -37,7 +32,7 @@ impl TcpBenchMark {
         let mut sending_tp = TimeProfiler::new();
         let mut receive_tp = TimeProfiler::new();
 
-        println!("Connecting to the server {}...", self.addr);
+        println!("Connecting to the tcp_server {}...", self.addr);
         match TcpStream::connect(self.addr) {
             Ok(mut stream) => {
                 // stream.set_linger(None).expect("set linger");
@@ -80,24 +75,22 @@ impl TcpBenchMark {
 
                 end(&mut stream);
 
-                stream
-                    .shutdown(Shutdown::Both)
-                    .expect("shutdown call failed");
+                stream.shutdown(Shutdown::Both).expect("shutdown call failed");
             }
             Err(err) => {
-                println!("Couldn't connect to server. Error: {}", err);
+                println!("Couldn't connect to tcp_server. Error: {}", err);
             }
         }
 
         if !time_profiler.is_empty() {
-            println!("-------------------------------------------------------------");
-            println!("total:\n    {}", time_profiler.fmt_delim("\n    ", ": "));
             println!("-------------------------------------------------------------");
             println!("sending:\n    {}", sending_tp.fmt_delim("\n    ", ": "));
             println!("-------------------------------------------------------------");
             println!("receiving:\n    {}", receive_tp.fmt_delim("\n    ", ": "));
             println!("-------------------------------------------------------------");
             println!("Summary_string:\n{}", hist.summary_string());
+            println!("-------------------------------------------------------------");
+            println!("total:\n    {}", time_profiler.fmt_delim("\n    ", ": "));
             println!("-------------------------------------------------------------");
 
             // println!("Sent/received everything!");

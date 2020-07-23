@@ -38,7 +38,7 @@ pub fn tcp_bench(addr: SocketAddr, items_count: usize, size: usize) {
     println!(
         "\n\
         RUN TESTING ==================\n\
-        server address: {}\n\
+        tcp_server address: {}\n\
         message size:   {}bytes\n\
         ==============================\n",
         addr, size
