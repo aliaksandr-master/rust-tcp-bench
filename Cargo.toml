@@ -17,3 +17,12 @@ core_affinity = "=0.5.10"
 itertools = "=0.9.0"
 tokio = { version = "=0.2.20", features = ["rt-core","rt-threaded","rt-util","io-driver","io-util","io-std","net","tcp","udp","uds","time","process","macros","sync","stream","signal","fs","dns","test-util","blocking"] }
 tokio-util = { version = "0.3.1", features = ["full"] }
+
+[profile.release]
+lto = true
+codegen-units = 1 # kills off parallel compilation to gain more effective link-time optimization
+opt-level = 3
+debug = false
+debug-assertions = false
+#overflow-checks = false
+#panic = "abort"
