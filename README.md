@@ -12,9 +12,11 @@ cargo run --release -- tcp_server_mio
 cargo run --release -- bench-tcp
 ```
 
-
 ## Results
-```Intel Xeon 2678 v3```
+```
+Intel Xeon 2678 v3
+on localhost
+```
 
 ### tcp_server_std
 ```
