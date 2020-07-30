@@ -1,8 +1,6 @@
-use bytes::BytesMut;
 use futures::{SinkExt, StreamExt};
 use std::net::SocketAddr;
-use tokio::io::{AsyncReadExt, AsyncWriteExt, Error};
-use tokio::net::{TcpListener, TcpStream};
+use tokio::net::TcpListener;
 use tokio_util::codec::{BytesCodec, Framed};
 
 #[tokio::main]
@@ -17,12 +15,12 @@ pub async fn tcp_server_tokio_framed_bytes(addr: SocketAddr) {
 
     let mut listener = TcpListener::bind(addr).await.unwrap();
     loop {
-        if let Ok((mut tcp_stream, addr)) = listener.accept().await {
+        if let Ok((stream, addr)) = listener.accept().await {
             println!("{} new peer", addr);
-            tcp_stream.set_nodelay(true).expect("set_nodelay");
-            tcp_stream.set_linger(None).expect("set_linger");
+            stream.set_nodelay(true).expect("set_nodelay");
+            stream.set_linger(None).expect("set_linger");
 
-            let mut framed = Framed::new(tcp_stream, BytesCodec::new());
+            let mut framed = Framed::new(stream, BytesCodec::new());
             while let Some(msg_res) = framed.next().await {
                 match msg_res {
                     Ok(msg) => {

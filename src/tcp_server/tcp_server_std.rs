@@ -1,6 +1,5 @@
-use futures::io::Error;
 use std::io::{ErrorKind, Read, Write};
-use std::net::{SocketAddr, TcpListener, TcpStream};
+use std::net::{SocketAddr, TcpListener};
 
 pub fn tcp_server_std(addr: SocketAddr) {
     println!(
@@ -16,6 +15,7 @@ pub fn tcp_server_std(addr: SocketAddr) {
     for stream_res in listener.incoming() {
         let mut stream = stream_res.expect("new peer");
         let addr = stream.peer_addr().expect("addr");
+        println!("{} new peer", addr);
 
         stream.set_ttl(1).expect("set ttl");
         stream.set_nodelay(true).expect("Can't set no_delay to true");
@@ -23,11 +23,9 @@ pub fn tcp_server_std(addr: SocketAddr) {
         stream.set_read_timeout(None).expect("set timeout");
         stream.set_write_timeout(None).expect("set timeout");
 
-        println!("{} new peer", addr);
-
+        let mut buf = vec![0; 4096];
         loop {
-            let mut buf = [0; 4096];
-            match stream.read(&mut buf) {
+            match stream.read(&mut buf[..]) {
                 Ok(0) => {
                     // - This reader has reached its "end of file" and will likely no longer be able to produce bytes. Note that this does not mean that the reader will always no longer be able to produce bytes.
                     // - The buffer specified was 0 bytes in length.

@@ -1,8 +1,7 @@
 use bytes::BytesMut;
-use futures::StreamExt;
 use std::net::SocketAddr;
-use tokio::io::{AsyncReadExt, AsyncWriteExt, Error};
-use tokio::net::{TcpListener, TcpStream};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::net::TcpListener;
 
 #[tokio::main]
 pub async fn tcp_server_tokio(addr: SocketAddr) {
@@ -21,26 +20,28 @@ pub async fn tcp_server_tokio(addr: SocketAddr) {
         tcp_stream.set_nodelay(true).expect("set nodelay");
         tcp_stream.set_linger(None).expect("set linger");
 
-        loop {
-            let mut buf = BytesMut::with_capacity(4096);
-            match tcp_stream.read_buf(&mut buf).await {
-                Ok(0) => {
-                    // - This reader has reached its "end of file" and will likely no longer be able to produce bytes. Note that this does not mean that the reader will always no longer be able to produce bytes.
-                    // - The buffer specified was 0 bytes in length.
-                    break;
-                }
-                Ok(n) => {
-                    if let Err(err) = tcp_stream.write(&buf[0..n]).await {
-                        eprintln!("{} ERROR: {}", addr, err);
+        tokio::spawn(async move {
+            let mut buf = [0; 8192];
+            loop {
+                match tcp_stream.read(&mut buf[..]).await {
+                    Ok(0) => {
+                        // - This reader has reached its "end of file" and will likely no longer be able to produce bytes. Note that this does not mean that the reader will always no longer be able to produce bytes.
+                        // - The buffer specified was 0 bytes in length.
+                        break;
+                    }
+                    Ok(n) => {
+                        if let Err(err) = tcp_stream.write(&buf[0..n]).await {
+                            eprintln!("{} ERROR: {}", addr, err);
+                            break;
+                        }
+                    }
+                    Err(err) => {
+                        eprint!("{} ERROR: {}", addr, err);
                         break;
                     }
                 }
-                Err(err) => {
-                    eprint!("{} ERROR: {}", addr, err);
-                    break;
-                }
             }
-        }
-        println!("{} peer exit", addr);
+            println!("{} peer exit", addr);
+        });
     }
 }
