@@ -22,28 +22,28 @@ messages count = 100000
 
 ### tcp_server_std
 ```
-avg: 009mks313ns
-median: 008mks965ns
-throughput: 107369.23/s
+avg: 008mks987ns
+median: 008mks557ns
+throughput: 111261.03/s
 ```
 
 ### tcp_server_tokio
 ```
-avg: 022mks284ns
-median: 020mks563ns
-throughput: 44874.85/s
+avg: 020mks242ns
+median: 018mks537ns
+throughput: 49402.06/s
 ```
 
 ### tcp_server_tokio_framed_bytes
 ```
-avg: 022mks529ns
-median: 020mks847ns
-throughput: 44385.42/s
+avg: 021mks901ns
+median: 019mks975ns
+throughput: 45659.36/s
 ```
 
 ### tcp_server_mio
 ```
-avg: 015mks147ns
-median: 013mks871ns
-throughput: 66018.73/s
+avg: 014mks278ns
+median: 013mks316ns
+throughput: 70034.03/s
 ```
