@@ -35,15 +35,21 @@ impl TimeProfiler {
         Self { count: 0, values: Vec::new() }
     }
 
-    pub fn add_duration(&mut self, duration: Duration) -> u64 {
-        let value = duration.as_nanos() as u64;
+    pub fn values(&self) -> &[u64] {
+        &self.values
+    }
+
+    pub fn add_duration(&mut self, duration: Duration) {
+        self.add_value(duration.as_nanos() as u64);
+    }
+
+    pub fn add_value(&mut self, value: u64) {
         self.values.push(value);
-        value
     }
 
     pub fn measure(&mut self, now: Instant) -> u64 {
         let value = now.elapsed().as_nanos() as u64;
-        self.values.push(value);
+        self.add_value(value);
         value
     }
 

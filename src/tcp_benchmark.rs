@@ -19,9 +19,9 @@ impl TcpBenchMark {
         }
     }
 
-    pub fn run<TItem, FProcess, FPrepare, FEnd>(&self, items: Vec<TItem>, mut prepare: FPrepare, mut process: FProcess, mut end: FEnd)
+    pub fn run<TItem, FProcess, FPrepare, FEnd>(&self, buf: &mut [u8], items: Vec<TItem>, mut prepare: FPrepare, mut process: FProcess, mut end: FEnd)
     where
-        FProcess: FnMut(&mut TcpStream, TItem, usize) -> (Duration, Duration),
+        FProcess: FnMut(&mut TcpStream, TItem, usize, &mut [u8]) -> (Duration, Duration),
         FPrepare: FnMut(&mut TcpStream),
         FEnd: FnMut(&mut TcpStream),
     {
@@ -32,30 +32,34 @@ impl TcpBenchMark {
         let mut sending_tp = TimeProfiler::new();
         let mut receive_tp = TimeProfiler::new();
 
-        println!("Connecting to the tcp_server {}...", self.addr);
         match TcpStream::connect(self.addr) {
             Ok(mut stream) => {
-                // stream.set_linger(None).expect("set linger");
+                core_affinity::set_for_current(core_affinity::get_core_ids().unwrap()[0]);
+
+                prepare(&mut stream);
 
                 println!(
-                    "nodelay:{:?}  ::  read_timeout:{:?}  ::  write_timeout:{:?}",
+                    "Connection to {} was established\
+                    \n             stream ttl: {}\
+                    \n         stream nodelay: {}\
+                    \n    stream read_timeout: {:?}\
+                    \n   stream write_timeout: {:?}",
+                    stream.peer_addr().expect("addr"),
                     stream.nodelay().expect("nodealy"),
+                    stream.ttl().expect("ttl"),
                     stream.read_timeout().expect("read_timeout"),
                     stream.write_timeout().expect("write_timeout"),
                 );
-
-                core_affinity::set_for_current(core_affinity::get_core_ids().unwrap()[0]);
-                println!("Connection established! Ready to send...");
-
-                prepare(&mut stream);
 
                 let half = len / 2;
                 let step10 = len.clone() / 10;
                 let step100 = len.clone() / 100;
 
+                println!("\nReady to send {:#?} messages...", items.len());
                 for (i, item) in items.into_iter().enumerate() {
                     let now = Instant::now();
-                    let (send_dur, receive_dur) = process(&mut stream, item, i);
+                    // println!("sending {}...", i);
+                    let (send_dur, receive_dur) = process(&mut stream, item, i, buf);
                     let val = time_profiler.measure(now);
 
                     sending_tp.add_duration(send_dur);
@@ -66,11 +70,12 @@ impl TcpBenchMark {
                     }
 
                     if (i % step10) == 0 {
-                        println!("{}%", i / step100);
+                        println!("sent {:>10} == {:>3}%", i, i / step100);
                     }
                 }
+
                 if (len % step10) == 0 {
-                    println!("{}%", len / step100);
+                    println!("sent {:>10} == {:>3}%", len, len / step100);
                 }
 
                 end(&mut stream);
