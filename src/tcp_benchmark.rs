@@ -34,8 +34,6 @@ impl TcpBenchMark {
 
         match TcpStream::connect(self.addr) {
             Ok(mut stream) => {
-                core_affinity::set_for_current(core_affinity::get_core_ids().unwrap()[0]);
-
                 prepare(&mut stream);
 
                 println!(

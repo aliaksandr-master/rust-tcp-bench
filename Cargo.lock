@@ -60,18 +60,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "core_affinity"
-version = "0.5.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f8a03115cc34fb0d7c321dd154a3914b3ca082ccc5c11d91bf7117dbbe7171f"
-dependencies = [
- "kernel32-sys",
- "libc",
- "num_cpus",
- "winapi 0.2.8",
-]
-
-[[package]]
 name = "either"
 version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -510,7 +498,6 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "clap",
- "core_affinity",
  "futures",
  "hdrhist",
  "itertools",
