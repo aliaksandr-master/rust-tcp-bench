@@ -16,6 +16,8 @@ cargo run --release -- bench-tcp
 ```
 Intel Xeon 2678 v3
 on localhost
+
+messages count = 100000
 ```
 
 ### tcp_server_std
@@ -41,7 +43,7 @@ throughput: 44385.42/s
 
 ### tcp_server_mio
 ```
-avg: 018mks721ns
-median: 017mks996ns
-throughput: 53414.58/s
+avg: 015mks147ns
+median: 013mks871ns
+throughput: 66018.73/s
 ```
